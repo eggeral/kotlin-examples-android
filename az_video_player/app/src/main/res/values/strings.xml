@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Jetpack Video Player</string>
+    <string name="video_list_title">Videos</string>
+    <string name="navigation_drawer_header_content_description">Header</string>
+    <string name="navigation_drawer_header_title">Title</string>
+    <string name="refresh_video_list">Refresh</string>
+    <string name="play">Play</string>
+    <string name="video_player_title">Player</string>
+    <string name="preview">preview</string>
+</resources>
