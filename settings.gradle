@@ -1,0 +1,18 @@
+include ':aa_hello_world_minimal:app'
+include ':ab_click_button:app'
+include ':ac_recycle_view:app'
+include ':ad_use_libs:app'
+include ':ad_use_libs:kotlinlib'
+
+include ':ba_gol:app'
+include ':bb_gol_start_stop:app'
+include ':bc_gol_edit:app'
+include ':bd_gol_scroll:app'
+include ':be_gol_zoom:app'
+include ':bf_gol_borders:app'
+include ':bg_TODO_gol_rotate_device:app'
+include ':bh_TODO_gol_viewport:app'
+
+include ':ca_video_player:app'
+
+include ':libGol'

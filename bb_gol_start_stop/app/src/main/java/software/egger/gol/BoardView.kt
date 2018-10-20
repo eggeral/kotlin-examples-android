@@ -7,6 +7,7 @@ import android.graphics.Paint
 import android.graphics.RectF
 import android.util.AttributeSet
 import android.view.View
+import software.egger.libgol.Board
 import software.egger.libgol.Cell
 
 class BoardView : View {
@@ -17,7 +18,7 @@ class BoardView : View {
         strokeWidth = 0.0f
     }
 
-    var cells: Array<Array<Cell>> = arrayOf(arrayOf())
+    var board: Board? = null
     var cellSize: Float = 25f
     var cellPadding: Float = 10f
 
@@ -29,9 +30,11 @@ class BoardView : View {
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
 
-        for ((rowIdx, row) in cells.withIndex()) {
-            for ((columnIdx, cell) in row.withIndex()) {
-                drawCell(canvas, cell, rowIdx, columnIdx)
+        val board = board ?: return
+
+        for (rowIdx in 0 until board.rows) {
+            for (columnIdx in 0 until board.columns) {
+                drawCell(canvas, board.cellAt(column = columnIdx, row = rowIdx), rowIdx, columnIdx)
             }
         }
 

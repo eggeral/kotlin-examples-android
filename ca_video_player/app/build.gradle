@@ -4,14 +4,14 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 
 android {
-    compileSdkVersion rootProject.compileSdkVersion
+    compileSdkVersion project.compileSdkVersion
     dataBinding {
         enabled = true
     }
     defaultConfig {
         applicationId "software.egger.jetpackvideoplayer"
-        minSdkVersion rootProject.minSdkVersion
-        targetSdkVersion rootProject.targetSdkVersion
+        minSdkVersion project.minSdkVersion
+        targetSdkVersion project.targetSdkVersion
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         versionCode 1
         versionName "0.1"
@@ -30,25 +30,25 @@ android {
 }
 
 dependencies {
-    kapt "android.arch.persistence.room:compiler:$rootProject.roomVersion"
-    kapt "com.github.bumptech.glide:compiler:$rootProject.glideVersion"
-    implementation "android.arch.lifecycle:extensions:$rootProject.lifecycleVersion"
-    implementation "android.arch.navigation:navigation-fragment-ktx:$rootProject.navigationVersion"
-    implementation "android.arch.navigation:navigation-ui-ktx:$rootProject.navigationVersion"
-    implementation "android.arch.persistence.room:runtime:$rootProject.roomVersion"
-    implementation "android.arch.work:work-runtime-ktx:$rootProject.workVersion"
-    implementation "androidx.core:core-ktx:$rootProject.ktxVersion"
-    implementation "com.android.support:appcompat-v7:$rootProject.supportLibraryVersion"
-    implementation "com.android.support:support-v4:$rootProject.supportLibraryVersion"
-    implementation "com.android.support:recyclerview-v7:$rootProject.supportLibraryVersion"
-    implementation "com.android.support.constraint:constraint-layout:$rootProject.constraintLayoutVersion"
-    implementation "com.android.support:design:$rootProject.supportLibraryVersion"
-    implementation "com.github.bumptech.glide:glide:$rootProject.glideVersion"
-    implementation "com.google.code.gson:gson:$rootProject.gsonVersion"
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$rootProject.kotlinVersion"
+    kapt "android.arch.persistence.room:compiler:$project.roomVersion"
+    kapt "com.github.bumptech.glide:compiler:$project.glideVersion"
+    implementation "android.arch.lifecycle:extensions:$project.lifecycleVersion"
+    implementation "android.arch.navigation:navigation-fragment-ktx:$project.navigationVersion"
+    implementation "android.arch.navigation:navigation-ui-ktx:$project.navigationVersion"
+    implementation "android.arch.persistence.room:runtime:$project.roomVersion"
+    implementation "android.arch.work:work-runtime-ktx:$project.workVersion"
+    implementation "androidx.core:core-ktx:$project.ktxVersion"
+    implementation "com.android.support:appcompat-v7:$project.supportLibraryVersion"
+    implementation "com.android.support:support-v4:$project.supportLibraryVersion"
+    implementation "com.android.support:recyclerview-v7:$project.supportLibraryVersion"
+    implementation "com.android.support.constraint:constraint-layout:$project.constraintLayoutVersion"
+    implementation "com.android.support:design:$project.supportLibraryVersion"
+    implementation "com.github.bumptech.glide:glide:$project.glideVersion"
+    implementation "com.google.code.gson:gson:$project.gsonVersion"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$project.kotlinVersion"
 
     // Testing dependencies
-    androidTestImplementation "com.android.support.test.espresso:espresso-contrib:$rootProject.espressoVersion"
-    androidTestImplementation "com.android.support.test.espresso:espresso-core:$rootProject.espressoVersion"
-    testImplementation "junit:junit:$rootProject.junitVersion"
+    androidTestImplementation "com.android.support.test.espresso:espresso-contrib:$project.espressoVersion"
+    androidTestImplementation "com.android.support.test.espresso:espresso-core:$project.espressoVersion"
+    testImplementation "junit:junit:$project.junitVersion"
 }

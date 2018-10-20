@@ -6,13 +6,11 @@ import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
 import kotlinx.android.synthetic.main.activity_game.*
-import software.egger.libgol.Cell
-import software.egger.libgol.Game
+import software.egger.libgol.Board
+import software.egger.libgol.cells
+import software.egger.libgol.translatedTo
 import java.util.*
 import kotlin.concurrent.fixedRateTimer
-import android.R.attr.duration
-import android.widget.Toast
-
 
 class GameActivity : AppCompatActivity() {
 
@@ -20,7 +18,8 @@ class GameActivity : AppCompatActivity() {
     private lateinit var playIcon: Drawable
     private lateinit var pauseIcon: Drawable
     private var timer: Timer? = null
-    private lateinit var game: Game
+    private val size = 1000
+    private val board: Board = Board(size, size)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,8 +30,15 @@ class GameActivity : AppCompatActivity() {
         playIcon = resources.getDrawable(R.drawable.ic_play_arrow_black_24dp, null)
         pauseIcon = resources.getDrawable(R.drawable.ic_pause_black_24dp, null)
 
-        game = Game(cells)
-        boardView.cells = cells
+        board.setCells(
+                """
+                ***_*
+                *____
+                ___**
+                _**_*
+                *_*_*
+                """.trimIndent().cells().translatedTo(size / 2 - 2, size / 2 - 2))
+        boardView.board = board
         boardView.cellSize = 40.0f * resources.displayMetrics.density
 
     }
@@ -46,7 +52,7 @@ class GameActivity : AppCompatActivity() {
     private fun play() {
         require(timer == null)
         timer = fixedRateTimer("GameLoop", false, period = 500L) {
-            game.calculateNextGeneration()
+            board.calculateNextGeneration()
             boardView.invalidate()
         }
     }
@@ -82,27 +88,5 @@ class GameActivity : AppCompatActivity() {
 
     }
 
-    private val size = 1000
-    private val cells = Array(size) { _ -> Array(size) { _ -> Cell(false) } }.apply {
 
-        val center = size / 2
-        get(center - 2)[center - 2].alive = true
-        get(center - 1)[center - 2].alive = true
-        get(center - 0)[center - 2].alive = true
-        get(center + 2)[center - 2].alive = true
-
-        get(center - 2)[center - 1].alive = true
-
-        get(center + 1)[center - 0].alive = true
-        get(center + 2)[center - 0].alive = true
-
-        get(center - 1)[center + 1].alive = true
-        get(center - 0)[center + 1].alive = true
-        get(center + 2)[center + 1].alive = true
-
-        get(center - 2)[center + 2].alive = true
-        get(center - 0)[center + 2].alive = true
-        get(center + 2)[center + 2].alive = true
-
-    }
 }

@@ -3,8 +3,10 @@ package software.egger.gol
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_game.*
+import software.egger.libgol.Board
 import software.egger.libgol.Cell
-import software.egger.libgol.Game
+import software.egger.libgol.cells
+import software.egger.libgol.translatedTo
 import kotlin.concurrent.fixedRateTimer
 
 class GameActivity : AppCompatActivity() {
@@ -14,118 +16,26 @@ class GameActivity : AppCompatActivity() {
 
         setContentView(R.layout.activity_game)
 
-        val game = Game(cells)
+        val size = 15
+        val board = Board(size, size)
+        board.setCells(
+                """
+                ***_*
+                *____
+                ___**
+                _**_*
+                *_*_*
+                """.trimIndent().cells().translatedTo(size / 2 - 2, size / 2 - 2))
+
 
         boardView.cellSize = 40.0f * resources.displayMetrics.density
-        boardView.cells = cells
+        boardView.board = board
 
         fixedRateTimer("GameLoop", false, period = 500L) {
-            game.calculateNextGeneration()
+            board.calculateNextGeneration()
             boardView.invalidate()
         }
 
     }
 
-    private val cells = arrayOf(
-            arrayOf(
-                    //0
-                    Cell(false),
-                    Cell(false),
-                    Cell(false),
-                    Cell(false),
-                    Cell(false),
-                    Cell(false),
-                    Cell(false),
-                    Cell(false)),
-            arrayOf(
-                    //1
-                    Cell(false),
-                    Cell(false),
-                    Cell(false),
-                    Cell(true),
-                    Cell(true),
-                    Cell(true),
-                    Cell(false),
-                    Cell(false)),
-            arrayOf(
-                    //2
-                    Cell(false),
-                    Cell(false),
-                    Cell(false),
-                    Cell(false),
-                    Cell(true),
-                    Cell(false),
-                    Cell(false),
-                    Cell(false)),
-            arrayOf(
-                    //3
-                    Cell(false),
-                    Cell(false),
-                    Cell(false),
-                    Cell(false),
-                    Cell(false),
-                    Cell(false),
-                    Cell(false),
-                    Cell(false)),
-            arrayOf(
-                    //4
-                    Cell(false),
-                    Cell(false),
-                    Cell(false),
-                    Cell(false),
-                    Cell(false),
-                    Cell(false),
-                    Cell(false),
-                    Cell(false)),
-            arrayOf(
-                    //5
-                    Cell(false),
-                    Cell(false),
-                    Cell(true),
-                    Cell(true),
-                    Cell(true),
-                    Cell(false),
-                    Cell(false),
-                    Cell(false)),
-            arrayOf(
-                    //6
-                    Cell(false),
-                    Cell(false),
-                    Cell(false),
-                    Cell(false),
-                    Cell(false),
-                    Cell(false),
-                    Cell(false),
-                    Cell(false)),
-            arrayOf(
-                    //7
-                    Cell(false),
-                    Cell(false),
-                    Cell(false),
-                    Cell(false),
-                    Cell(false),
-                    Cell(false),
-                    Cell(false),
-                    Cell(false)),
-            arrayOf(
-                    //8
-                    Cell(false),
-                    Cell(false),
-                    Cell(true),
-                    Cell(true),
-                    Cell(true),
-                    Cell(false),
-                    Cell(false),
-                    Cell(false)),
-            arrayOf(
-                    //9
-                    Cell(false),
-                    Cell(false),
-                    Cell(false),
-                    Cell(false),
-                    Cell(false),
-                    Cell(false),
-                    Cell(false),
-                    Cell(false))
-    )
 }

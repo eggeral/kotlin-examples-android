@@ -10,8 +10,8 @@ import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.ScaleGestureDetector
 import android.view.View
+import software.egger.libgol.Board
 import software.egger.libgol.Cell
-
 
 class BoardView : View {
 
@@ -21,12 +21,9 @@ class BoardView : View {
         strokeWidth = 0.0f
     }
 
-    var cells: Array<Array<Cell>> = arrayOf(arrayOf())
+    var board: Board? = null
     var cellSize: Float = 25f
     var cellPaddingFactor: Float = 0.15f
-
-    val boardWidth get() = cellSize * cells.size
-    val boardHeight get() = cellSize * cells[cells.size - 1].size
 
     var offsetX = 0.0f
     var offsetY = 0.0f
@@ -44,10 +41,11 @@ class BoardView : View {
             val rowIdx = rowFor(event.y)
             val columnIdx = columnFor(event.x)
 
-            if (rowIdx < 0 || rowIdx >= cells.size) return true
-            if (columnIdx < 0 || columnIdx >= cells[rowIdx].size) return true
+            val board = board ?: return true
+            if (rowIdx !in 0 until board.rows) return true
+            if (columnIdx !in 0 until board.columns) return true
 
-            with(cells[rowIdx][columnIdx]) {
+            with(board.cellAt(column = columnIdx, row = rowIdx)) {
                 alive = !alive
             }
 
@@ -71,9 +69,11 @@ class BoardView : View {
             val newCellSize = cellSize * detector.scaleFactor
             val oldCellSize = cellSize
 
+            val board = board ?: return true
+
             cellSize = when {
-                newCellSize * cells.size < width -> cellSize
-                newCellSize * cells[cells.size - 1].size < height -> cellSize
+                newCellSize * board.columns < width -> cellSize
+                newCellSize * board.rows < height -> cellSize
                 newCellSize < minCellSize -> minCellSize
                 newCellSize > maxCellSize -> maxCellSize
                 else -> newCellSize
@@ -116,10 +116,12 @@ class BoardView : View {
 
         super.onDraw(canvas)
 
+        val board = board ?: return
+
         val leftBorder = 0.0f
         val topBorder = 0.0f
-        val rightBorder = width - boardWidth
-        val bottomBorder = height - boardHeight
+        val rightBorder = width - board.columns * cellSize
+        val bottomBorder = height - board.rows * cellSize
 
         if (offsetX < rightBorder) offsetX = rightBorder
         if (offsetY < bottomBorder) offsetY = bottomBorder
@@ -128,17 +130,18 @@ class BoardView : View {
         if (offsetY > topBorder) offsetY = topBorder
 
 
-        for ((rowIdx, row) in cells.withIndex()) {
-            for ((columnIdx, cell) in row.withIndex()) {
-                drawCell(canvas, cell, rowIdx, columnIdx)
+        for (rowIdx in 0 until board.rows) {
+            for (columnIdx in 0 until board.columns) {
+                drawCell(canvas, board.cellAt(column = columnIdx, row = rowIdx), rowIdx, columnIdx)
             }
         }
 
     }
 
     fun centerBoard() {
-        offsetX = (width - boardWidth - cellSize) / 2.0f
-        offsetY = (height - boardHeight - cellSize) / 2.0f
+        val board = board ?: return
+        offsetX = (width - board.rows * cellSize - cellSize) / 2.0f
+        offsetY = (height - board.columns * cellSize - cellSize) / 2.0f
         invalidate()
     }
 

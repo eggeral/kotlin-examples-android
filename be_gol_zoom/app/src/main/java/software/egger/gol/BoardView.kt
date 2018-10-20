@@ -10,6 +10,7 @@ import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.ScaleGestureDetector
 import android.view.View
+import software.egger.libgol.Board
 import software.egger.libgol.Cell
 
 
@@ -21,9 +22,10 @@ class BoardView : View {
         strokeWidth = 0.0f
     }
 
-    var cells: Array<Array<Cell>> = arrayOf(arrayOf())
+    var board: Board? = null
     var cellSize: Float = 25f
     var cellPaddingFactor: Float = 0.15f
+
     var offsetX = 0.0f
     var offsetY = 0.0f
     var minCellSize = 10 * resources.displayMetrics.density
@@ -39,10 +41,12 @@ class BoardView : View {
             val rowIdx = rowFor(event.y)
             val columnIdx = columnFor(event.x)
 
-            if (rowIdx < 0 || rowIdx >= cells.size) return true
-            if (columnIdx < 0 || columnIdx >= cells[rowIdx].size) return true
+            val board = board ?: return true
+            if (rowIdx !in 0 until board.rows) return true
+            if (columnIdx !in 0 until board.columns) return true
 
-            with(cells[rowIdx][columnIdx]) {
+
+            with(board.cellAt(column = columnIdx, row = rowIdx)) {
                 alive = !alive
             }
 
@@ -106,9 +110,11 @@ class BoardView : View {
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
 
-        for ((rowIdx, row) in cells.withIndex()) {
-            for ((columnIdx, cell) in row.withIndex()) {
-                drawCell(canvas, cell, rowIdx, columnIdx)
+        val board = board ?: return
+
+        for (rowIdx in 0 until board.rows) {
+            for (columnIdx in 0 until board.columns) {
+                drawCell(canvas, board.cellAt(column = columnIdx, row = rowIdx), rowIdx, columnIdx)
             }
         }
 

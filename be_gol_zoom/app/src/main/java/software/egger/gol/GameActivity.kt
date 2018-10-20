@@ -6,8 +6,10 @@ import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
 import kotlinx.android.synthetic.main.activity_game.*
+import software.egger.libgol.Board
 import software.egger.libgol.Cell
-import software.egger.libgol.Game
+import software.egger.libgol.cells
+import software.egger.libgol.translatedTo
 import java.util.*
 import kotlin.concurrent.fixedRateTimer
 
@@ -17,7 +19,8 @@ class GameActivity : AppCompatActivity() {
     private lateinit var playIcon: Drawable
     private lateinit var pauseIcon: Drawable
     private var timer: Timer? = null
-    private lateinit var game: Game
+    private val size = 15
+    private val board: Board = Board(size, size)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,16 +31,22 @@ class GameActivity : AppCompatActivity() {
         playIcon = resources.getDrawable(R.drawable.ic_play_arrow_black_24dp, null)
         pauseIcon = resources.getDrawable(R.drawable.ic_pause_black_24dp, null)
 
-        game = Game(cells)
-        boardView.cells = cells
+        board.setCells(
+                """
+                ***_*
+                *____
+                ___**
+                _**_*
+                *_*_*
+                """.trimIndent().cells().translatedTo(size / 2 - 2, size / 2 - 2))
+        boardView.board = board
         boardView.cellSize = 40.0f * resources.displayMetrics.density
-
     }
 
     private fun play() {
         require(timer == null)
         timer = fixedRateTimer("GameLoop", false, period = 500L) {
-            game.calculateNextGeneration()
+            board.calculateNextGeneration()
             boardView.invalidate()
         }
     }
