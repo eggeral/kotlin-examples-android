@@ -1,6 +1,10 @@
-build
-local.properties
-out
+*.iml
 .gradle
 .idea
+.DS_Store
+build
+captures
+.externalNativeBuild
+local.properties
+out
 *.iml

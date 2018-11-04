@@ -12,6 +12,8 @@ import android.view.ScaleGestureDetector
 import android.view.View
 import software.egger.libgol.Board
 import software.egger.libgol.Cell
+import kotlin.math.max
+import kotlin.math.min
 
 class BoardView : View {
 
@@ -20,15 +22,15 @@ class BoardView : View {
         style = Paint.Style.FILL
         strokeWidth = 0.0f
     }
+    private var cellPaddingFactor: Float = 0.15f
 
     var board: Board? = null
     var cellSize: Float = 25f
-    var cellPaddingFactor: Float = 0.15f
 
     var offsetX = 0.0f
     var offsetY = 0.0f
-    var minCellSize = 10 * resources.displayMetrics.density
-    var maxCellSize = 60 * resources.displayMetrics.density
+    private var minCellSize = 10 * resources.displayMetrics.density
+    private var maxCellSize = 60 * resources.displayMetrics.density
 
 
     private val gestureListener = object : GestureDetector.SimpleOnGestureListener() {
@@ -38,8 +40,8 @@ class BoardView : View {
         }
 
         override fun onSingleTapConfirmed(event: MotionEvent): Boolean {
-            val rowIdx = rowFor(event.y)
-            val columnIdx = columnFor(event.x)
+            val rowIdx = rowForScreenY(event.y)
+            val columnIdx = columnForScreenX(event.x)
 
             val board = board ?: return true
             if (rowIdx !in 0 until board.rows) return true
@@ -129,9 +131,14 @@ class BoardView : View {
         if (offsetX > leftBorder) offsetX = leftBorder
         if (offsetY > topBorder) offsetY = topBorder
 
+        val columnIdxStart = max(0, idxForOffset(offsetX))
+        val columnIdxEnd = min(board.columns, idxForOffset(offsetX - width) + 1)
 
-        for (rowIdx in 0 until board.rows) {
-            for (columnIdx in 0 until board.columns) {
+        val rowIdxStart = max(0, idxForOffset(offsetY))
+        val rowIdxEnd = min(board.rows, idxForOffset(offsetY - height) + 1)
+
+        for (rowIdx in rowIdxStart until rowIdxEnd) {
+            for (columnIdx in columnIdxStart until columnIdxEnd) {
                 drawCell(canvas, board.cellAt(column = columnIdx, row = rowIdx), rowIdx, columnIdx)
             }
         }
@@ -164,8 +171,9 @@ class BoardView : View {
         return RectF(left + offsetX, top + offsetY, right + offsetX, bottom + offsetY)
     }
 
-    private fun rowFor(y: Float) = ((y - offsetY) / cellSize).toInt()
+    private fun idxForOffset(offset: Float) = (-offset / cellSize).toInt()
 
-    private fun columnFor(x: Float) = ((x - offsetX) / cellSize).toInt()
+    private fun rowForScreenY(y: Float) = ((y - offsetY) / cellSize).toInt()
+    private fun columnForScreenX(x: Float) = ((x - offsetX) / cellSize).toInt()
 
 }
