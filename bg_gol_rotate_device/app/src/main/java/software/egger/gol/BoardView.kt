@@ -20,15 +20,15 @@ class BoardView : View {
         style = Paint.Style.FILL
         strokeWidth = 0.0f
     }
+    private var cellPaddingFactor: Float = 0.15f
 
     var board: Board? = null
     var cellSize: Float = 25f
-    var cellPaddingFactor: Float = 0.15f
 
     var offsetX = 0.0f
     var offsetY = 0.0f
-    var minCellSize = 10 * resources.displayMetrics.density
-    var maxCellSize = 60 * resources.displayMetrics.density
+    private var minCellSize = 10 * resources.displayMetrics.density
+    private var maxCellSize = 60 * resources.displayMetrics.density
 
 
     private val gestureListener = object : GestureDetector.SimpleOnGestureListener() {

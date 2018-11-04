@@ -10,7 +10,7 @@ include ':bc_gol_edit:app'
 include ':bd_gol_scroll:app'
 include ':be_gol_zoom:app'
 include ':bf_gol_borders:app'
-include ':bg_TODO_gol_rotate_device:app'
+include ':bg_gol_rotate_device:app'
 include ':bh_TODO_gol_viewport:app'
 
 include ':ca_video_player:app'
