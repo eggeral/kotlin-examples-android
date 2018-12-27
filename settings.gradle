@@ -12,6 +12,7 @@ include ':be_gol_zoom:app'
 include ':bf_gol_borders:app'
 include ':bg_gol_rotate_device:app'
 include ':bh_gol_viewport:app'
+include ':bi_gol_mpp_android:app'
 
 include ':ca_video_player:app'
 

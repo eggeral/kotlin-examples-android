@@ -22,7 +22,7 @@ class VideoPlayerFragment : Fragment() {
             container: ViewGroup?,
             savedInstanceState: Bundle?
     ): View? {
-        val filename = requireNotNull(arguments).getString(argFilename)
+        val filename = requireNotNull(arguments).getString(argFilename)!!
         val audioManager = context?.getSystemService(Context.AUDIO_SERVICE) as AudioManager
 
         val factory = VideoPlayerViewModelFactory(VideoRepository, filename)
