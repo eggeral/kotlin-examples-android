@@ -26,11 +26,19 @@ kotlin {
                 implementation 'org.jetbrains.kotlin:kotlin-test-annotations-common'
             }
         }
+
+        iosMain {
+            dependencies {
+                implementation 'org.jetbrains.kotlin:kotlin-stdlib'
+            }
+        }
+
         androidMain {
             dependencies {
                 implementation 'org.jetbrains.kotlin:kotlin-stdlib'
             }
         }
+
         androidTest {
             dependencies {
                 implementation 'org.jetbrains.kotlin:kotlin-test'
