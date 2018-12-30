@@ -74,6 +74,19 @@ class BoardDisplay(private val minCellSize: Double, private val maxCellSize: Dou
         offsetY += corrY
     }
 
+    fun tap(board: Board, x: Double, y: Double) {
+        val rowIdx = rowForScreenY(y)
+        val columnIdx = columnForScreenX(x)
+
+        if (rowIdx !in 0 until board.rows) return
+        if (columnIdx !in 0 until board.columns) return
+
+        with(board.cellAt(column = columnIdx, row = rowIdx)) {
+            alive = !alive
+        }
+
+    }
+
     fun scroll(distanceX: Double, distanceY: Double) {
         offsetX -= distanceX
         offsetY -= distanceY
@@ -99,5 +112,8 @@ class BoardDisplay(private val minCellSize: Double, private val maxCellSize: Dou
     }
 
     private fun idxForOffset(offset: Double) = (-offset / cellSize).toInt()
+    private fun rowForScreenY(y: Double) = ((y - offsetY) / cellSize).toInt()
+    private fun columnForScreenX(x: Double) = ((x - offsetX) / cellSize).toInt()
+
 
 }

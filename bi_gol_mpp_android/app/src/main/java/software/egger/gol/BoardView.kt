@@ -32,17 +32,9 @@ class BoardView : View {
         }
 
         override fun onSingleTapConfirmed(event: MotionEvent): Boolean {
-            val rowIdx = rowForScreenY(event.y)
-            val columnIdx = columnForScreenX(event.x)
 
             val board = board ?: return true
-            if (rowIdx !in 0 until board.rows) return true
-            if (columnIdx !in 0 until board.columns) return true
-
-            with(board.cellAt(column = columnIdx, row = rowIdx)) {
-                alive = !alive
-            }
-
+            boardDisplay.tap(board, event.x.toDouble(), event.y.toDouble())
             invalidate()
             return true
         }
@@ -101,7 +93,7 @@ class BoardView : View {
 
         val board = board ?: return
         commonCanvas.canvas = canvas
-        boardDisplay.draw(commonCanvas,board, width.toDouble(), height.toDouble())
+        boardDisplay.draw(commonCanvas, board, width.toDouble(), height.toDouble())
 
     }
 
