@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
 import kotlinx.android.synthetic.main.activity_game.*
+import software.egger.libgol.BoardDisplay
 import java.util.*
 import kotlin.concurrent.fixedRateTimer
 
@@ -16,6 +17,8 @@ class GameActivity : AppCompatActivity() {
     private lateinit var playIcon: Drawable
     private lateinit var pauseIcon: Drawable
     private lateinit var boardViewModel: BoardViewModel
+    private lateinit var boardDisplay: BoardDisplay
+
     private var timer: Timer? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -29,23 +32,31 @@ class GameActivity : AppCompatActivity() {
 
         boardViewModel = ViewModelProviders.of(this).get(BoardViewModel::class.java)
 
-        boardView.board = boardViewModel.board
-        boardView.cellSize = boardViewModel.cellSize ?: 40.0f * resources.displayMetrics.density
-        boardView.offsetX = boardViewModel.offsetX ?: 0.0f
-        boardView.offsetY = boardViewModel.offsetY ?: 0.0f
+        boardDisplay = BoardDisplay(
+                board = boardViewModel.board,
+                minCellSize = 10.0 * resources.displayMetrics.density,
+                maxCellSize = 60.0 * resources.displayMetrics.density,
+                width = { boardView.width.toDouble() },
+                height = { boardView.height.toDouble() },
+                cellSize = boardViewModel.cellSize ?: 40.0 * resources.displayMetrics.density,
+                offsetX = boardViewModel.offsetX ?: 0.0,
+                offsetY = boardViewModel.offsetY ?: 0.0
+        )
+
+        boardView.boardDisplay = boardDisplay
     }
 
     override fun onPause() {
         super.onPause()
-        boardViewModel.cellSize = boardView.cellSize
-        boardViewModel.offsetX = boardView.offsetX
-        boardViewModel.offsetY = boardView.offsetY
+        boardViewModel.cellSize = boardDisplay.cellSize
+        boardViewModel.offsetX = boardDisplay.offsetX
+        boardViewModel.offsetY = boardDisplay.offsetY
     }
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {
         super.onWindowFocusChanged(hasFocus)
         if (hasFocus && boardViewModel.cellSize == null)
-            boardView.centerBoard()
+            boardDisplay.centerBoard()
     }
 
     private fun play() {

@@ -21,7 +21,7 @@ class BoardViewModel : ViewModel() {
 
     }
 
-    var cellSize: Float? = null
-    var offsetX: Float? = null
-    var offsetY: Float? = null
+    var cellSize: Double? = null
+    var offsetX: Double? = null
+    var offsetY: Double? = null
 }

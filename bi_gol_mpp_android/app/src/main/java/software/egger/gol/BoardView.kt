@@ -7,20 +7,18 @@ import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.ScaleGestureDetector
 import android.view.View
-import software.egger.libgol.Board
 import software.egger.libgol.BoardDisplay
 import software.egger.libgolandroid.AndroidCanvas
 
 class BoardView : View {
 
-    var board: Board? = null
-    var cellSize: Float = 25f
+    constructor(context: Context?) : super(context)
+    constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs)
+    constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr)
+    constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int, defStyleRes: Int) : super(context, attrs, defStyleAttr, defStyleRes)
 
-    var offsetX = 0.0f
-    var offsetY = 0.0f
-    private var minCellSize = 10 * resources.displayMetrics.density
-    private var maxCellSize = 60 * resources.displayMetrics.density
-
+    lateinit var boardDisplay: BoardDisplay
+    private val commonCanvas = AndroidCanvas()
 
     private val gestureListener = object : GestureDetector.SimpleOnGestureListener() {
         override fun onDown(e: MotionEvent): Boolean {
@@ -30,8 +28,7 @@ class BoardView : View {
 
         override fun onSingleTapConfirmed(event: MotionEvent): Boolean {
 
-            val board = board ?: return true
-            boardDisplay.tap(board, event.x.toDouble(), event.y.toDouble())
+            boardDisplay.tap(event.x.toDouble(), event.y.toDouble())
             invalidate()
             return true
         }
@@ -47,13 +44,8 @@ class BoardView : View {
     private val zoomListener = object : ScaleGestureDetector.SimpleOnScaleGestureListener() {
         override fun onScale(detector: ScaleGestureDetector): Boolean {
 
-            val board = board ?: return true
-
             boardDisplay.scale(
-                    board,
                     detector.scaleFactor.toDouble(),
-                    width.toDouble(),
-                    height.toDouble(),
                     detector.focusX.toDouble(),
                     detector.focusY.toDouble()
             )
@@ -68,11 +60,6 @@ class BoardView : View {
     private val gestureDetector: GestureDetector = GestureDetector(context, gestureListener)
     private val zoomDetector: ScaleGestureDetector = ScaleGestureDetector(context, zoomListener)
 
-    constructor(context: Context?) : super(context)
-    constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs)
-    constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr)
-    constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int, defStyleRes: Int) : super(context, attrs, defStyleAttr, defStyleRes)
-
     override fun onTouchEvent(event: MotionEvent): Boolean {
         var result = zoomDetector.onTouchEvent(event)
         if (!zoomDetector.isInProgress) {
@@ -81,23 +68,13 @@ class BoardView : View {
         return result
     }
 
-    private val boardDisplay = BoardDisplay(minCellSize.toDouble(), maxCellSize.toDouble())
-    private val commonCanvas = AndroidCanvas()
-
     override fun onDraw(canvas: Canvas) {
 
         super.onDraw(canvas)
 
-        val board = board ?: return
         commonCanvas.canvas = canvas
-        boardDisplay.draw(commonCanvas, board, width.toDouble(), height.toDouble())
+        boardDisplay.draw(commonCanvas)
 
-    }
-
-    fun centerBoard() {
-        val board = board ?: return
-        boardDisplay.centerBoard(board, width.toDouble(), height.toDouble())
-        invalidate()
     }
 
 }
