@@ -2,19 +2,16 @@ package software.egger.gol
 
 import android.content.Context
 import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
 import android.util.AttributeSet
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.ScaleGestureDetector
 import android.view.View
-import software.egger.libgol.*
+import software.egger.libgol.Board
+import software.egger.libgol.BoardDisplay
 import software.egger.libgolandroid.AndroidCanvas
 
 class BoardView : View {
-
-    private var cellPaddingFactor: Float = 0.15f
 
     var board: Board? = null
     var cellSize: Float = 25f
@@ -102,27 +99,5 @@ class BoardView : View {
         boardDisplay.centerBoard(board, width.toDouble(), height.toDouble())
         invalidate()
     }
-
-    private fun rectFor(rowIdx: Int, columnIdx: Int): Rectangle {
-
-        val cellPadding = cellSize * cellPaddingFactor
-
-        val left = (columnIdx * cellSize) + cellPadding
-        val right = (left + cellSize) - cellPadding
-        val top = (rowIdx * cellSize) + cellPadding
-        val bottom = (top + cellSize) - cellPadding
-
-        return Rectangle(
-                (left + offsetX).toDouble(),
-                (top + offsetY).toDouble(),
-                (right + offsetX).toDouble(),
-                (bottom + offsetY).toDouble()
-        )
-    }
-
-    private fun idxForOffset(offset: Float) = (-offset / cellSize).toInt()
-
-    private fun rowForScreenY(y: Float) = ((y - offsetY) / cellSize).toInt()
-    private fun columnForScreenX(x: Float) = ((x - offsetX) / cellSize).toInt()
 
 }
