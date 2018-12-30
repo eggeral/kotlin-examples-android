@@ -3,44 +3,40 @@ package software.egger.libgol
 import kotlin.math.max
 import kotlin.math.min
 
-interface Canvas {
-    fun drawRect(rectangle: RectF, paint: Paint)
+interface CommonCanvas {
+    fun drawRect(rectangle: Rectangle, commonPaint: CommonPaint)
 
 }
 
-class RectF(left: Double, top: Double, right: Double, bottom: Double)
+class Rectangle(val left: Double, val top: Double, val right: Double, val bottom: Double)
 
 enum class Style {
     Fill
 }
 
-class Paint() {
-    var color = Color(0x00, 0x00, 0x00)
+class CommonPaint {
+    var color = CommonColor(0x00, 0x00, 0x00)
     var style = Style.Fill
     var strokeWidth = 1.0
 }
 
-data class Color(val red: Int, val green: Int, val blue: Int, val alpha: Float = 1.0f)
+data class CommonColor(val red: Int, val green: Int, val blue: Int, val alpha: Float = 1.0f)
 
-class BoardDisplay(var width: Double, var height: Double, val minCellSize: Double, val maxCellSize: Double) {
+class BoardDisplay {
 
-    private val paint = Paint().apply {
-        color = Color(0x44, 0x44, 0x44)
+    private val paint = CommonPaint().apply {
+        color = CommonColor(0x44, 0x44, 0x44)
         style = Style.Fill
         strokeWidth = 0.0
     }
     private var cellPaddingFactor: Float = 0.15f
 
-    var board: Board? = null
     var cellSize: Double = 25.0
 
     var offsetX = 0.0
     var offsetY = 0.0
 
-
-    fun draw(canvas: Canvas) {
-
-        val board = board ?: return
+    fun draw(commonCanvas: CommonCanvas, board: Board, width: Double, height: Double) {
 
         val leftBorder = 0.0
         val topBorder = 0.0
@@ -61,26 +57,20 @@ class BoardDisplay(var width: Double, var height: Double, val minCellSize: Doubl
 
         for (rowIdx in rowIdxStart until rowIdxEnd) {
             for (columnIdx in columnIdxStart until columnIdxEnd) {
-                drawCell(canvas, board.cellAt(column = columnIdx, row = rowIdx), rowIdx, columnIdx)
+                drawCell(commonCanvas, board.cellAt(column = columnIdx, row = rowIdx), rowIdx, columnIdx)
             }
         }
 
     }
 
-    fun centerBoard() {
-        val board = board ?: return
-        offsetX = (width - board.rows * cellSize - cellSize) / 2.0f
-        offsetY = (height - board.columns * cellSize - cellSize) / 2.0f
-    }
-
-    private fun drawCell(canvas: Canvas, cell: Cell, rowIdx: Int, columnIdx: Int) {
+    private fun drawCell(commonCanvas: CommonCanvas, cell: Cell, rowIdx: Int, columnIdx: Int) {
 
         if (cell.alive) {
-            canvas.drawRect(rectFor(rowIdx, columnIdx), paint)
+            commonCanvas.drawRect(rectFor(rowIdx, columnIdx), paint)
         }
     }
 
-    private fun rectFor(rowIdx: Int, columnIdx: Int): RectF {
+    private fun rectFor(rowIdx: Int, columnIdx: Int): Rectangle {
 
         val cellPadding = cellSize * cellPaddingFactor
 
@@ -89,13 +79,10 @@ class BoardDisplay(var width: Double, var height: Double, val minCellSize: Doubl
         val top = (rowIdx * cellSize) + cellPadding
         val bottom = (top + cellSize) - cellPadding
 
-        return RectF(left + offsetX, top + offsetY, right + offsetX, bottom + offsetY)
+        return Rectangle(left + offsetX, top + offsetY, right + offsetX, bottom + offsetY)
     }
 
     private fun idxForOffset(offset: Double) = (-offset / cellSize).toInt()
-
-    private fun rowForScreenY(y: Double) = ((y - offsetY) / cellSize).toInt()
-    private fun columnForScreenX(x: Double) = ((x - offsetX) / cellSize).toInt()
 
 }
 

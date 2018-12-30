@@ -1,4 +1,4 @@
-include ':aa_hello_world_minimal:app'
+include ':aa_hello_world_minimal:app', ':libgolandroid'
 include ':ab_click_button:app'
 include ':ac_recycle_view:app'
 include ':ad_use_libs:app'

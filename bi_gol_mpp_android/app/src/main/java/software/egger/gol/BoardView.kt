@@ -10,8 +10,9 @@ import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.ScaleGestureDetector
 import android.view.View
-import software.egger.libgol.Board
-import software.egger.libgol.Cell
+import software.egger.libgol.*
+import software.egger.libgolandroid.AndroidCanvas
+import software.egger.libgolandroid.asRectF
 import kotlin.math.max
 import kotlin.math.min
 
@@ -119,6 +120,8 @@ class BoardView : View {
         super.onDraw(canvas)
 
         val board = board ?: return
+        val commonCanvas = AndroidCanvas()
+        commonCanvas.canvas = canvas
 
         val leftBorder = 0.0f
         val topBorder = 0.0f
@@ -139,7 +142,7 @@ class BoardView : View {
 
         for (rowIdx in rowIdxStart until rowIdxEnd) {
             for (columnIdx in columnIdxStart until columnIdxEnd) {
-                drawCell(canvas, board.cellAt(column = columnIdx, row = rowIdx), rowIdx, columnIdx)
+                drawCell(commonCanvas, board.cellAt(column = columnIdx, row = rowIdx), rowIdx, columnIdx)
             }
         }
 
@@ -152,14 +155,14 @@ class BoardView : View {
         invalidate()
     }
 
-    private fun drawCell(canvas: Canvas, cell: Cell, rowIdx: Int, columnIdx: Int) {
+    private fun drawCell(canvas: CommonCanvas, cell: Cell, rowIdx: Int, columnIdx: Int) {
 
         if (cell.alive) {
-            canvas.drawRect(rectFor(rowIdx, columnIdx), paint)
+            canvas.drawRect(rectFor(rowIdx, columnIdx), CommonPaint())
         }
     }
 
-    private fun rectFor(rowIdx: Int, columnIdx: Int): RectF {
+    private fun rectFor(rowIdx: Int, columnIdx: Int): Rectangle {
 
         val cellPadding = cellSize * cellPaddingFactor
 
@@ -168,7 +171,12 @@ class BoardView : View {
         val top = (rowIdx * cellSize) + cellPadding
         val bottom = (top + cellSize) - cellPadding
 
-        return RectF(left + offsetX, top + offsetY, right + offsetX, bottom + offsetY)
+        return Rectangle(
+                (left + offsetX).toDouble(),
+                (top + offsetY).toDouble(),
+                (right + offsetX).toDouble(),
+                (bottom + offsetY).toDouble()
+        )
     }
 
     private fun idxForOffset(offset: Float) = (-offset / cellSize).toInt()
