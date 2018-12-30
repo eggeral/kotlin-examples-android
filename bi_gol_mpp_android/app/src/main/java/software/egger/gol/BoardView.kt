@@ -48,9 +48,7 @@ class BoardView : View {
         }
 
         override fun onScroll(start: MotionEvent, end: MotionEvent, distanceX: Float, distanceY: Float): Boolean {
-            offsetX -= distanceX
-            offsetY -= distanceY
-
+            boardDisplay.scroll(distanceX.toDouble(), distanceY.toDouble())
             invalidate()
             return true
         }
