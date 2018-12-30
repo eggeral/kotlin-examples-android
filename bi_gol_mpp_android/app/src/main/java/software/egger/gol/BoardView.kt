@@ -4,7 +4,6 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
-import android.graphics.RectF
 import android.util.AttributeSet
 import android.view.GestureDetector
 import android.view.MotionEvent
@@ -12,17 +11,9 @@ import android.view.ScaleGestureDetector
 import android.view.View
 import software.egger.libgol.*
 import software.egger.libgolandroid.AndroidCanvas
-import software.egger.libgolandroid.asRectF
-import kotlin.math.max
-import kotlin.math.min
 
 class BoardView : View {
 
-    private val paint = Paint().apply {
-        color = Color.DKGRAY
-        style = Paint.Style.FILL
-        strokeWidth = 0.0f
-    }
     private var cellPaddingFactor: Float = 0.15f
 
     var board: Board? = null
@@ -69,32 +60,20 @@ class BoardView : View {
     private val zoomListener = object : ScaleGestureDetector.SimpleOnScaleGestureListener() {
         override fun onScale(detector: ScaleGestureDetector): Boolean {
 
-            val newCellSize = cellSize * detector.scaleFactor
-            val oldCellSize = cellSize
-
             val board = board ?: return true
 
-            cellSize = when {
-                newCellSize * board.columns < width -> cellSize
-                newCellSize * board.rows < height -> cellSize
-                newCellSize < minCellSize -> minCellSize
-                newCellSize > maxCellSize -> maxCellSize
-                else -> newCellSize
-            }
-
-            val realScaleFactor = cellSize / oldCellSize
-
-            val distX = detector.focusX - offsetX
-            val distY = detector.focusY - offsetY
-
-            val corrX = distX - distX * realScaleFactor
-            val corrY = distY - distY * realScaleFactor
-
-            offsetX += corrX
-            offsetY += corrY
+            boardDisplay.scale(
+                    board,
+                    detector.scaleFactor.toDouble(),
+                    width.toDouble(),
+                    height.toDouble(),
+                    detector.focusX.toDouble(),
+                    detector.focusY.toDouble()
+            )
 
             invalidate()
             return true
+
         }
 
     }
@@ -115,51 +94,23 @@ class BoardView : View {
         return result
     }
 
+    private val boardDisplay = BoardDisplay(minCellSize.toDouble(), maxCellSize.toDouble())
+    private val commonCanvas = AndroidCanvas()
+
     override fun onDraw(canvas: Canvas) {
 
         super.onDraw(canvas)
 
         val board = board ?: return
-        val commonCanvas = AndroidCanvas()
         commonCanvas.canvas = canvas
-
-        val leftBorder = 0.0f
-        val topBorder = 0.0f
-        val rightBorder = width - board.columns * cellSize
-        val bottomBorder = height - board.rows * cellSize
-
-        if (offsetX < rightBorder) offsetX = rightBorder
-        if (offsetY < bottomBorder) offsetY = bottomBorder
-
-        if (offsetX > leftBorder) offsetX = leftBorder
-        if (offsetY > topBorder) offsetY = topBorder
-
-        val columnIdxStart = max(0, idxForOffset(offsetX))
-        val columnIdxEnd = min(board.columns, idxForOffset(offsetX - width) + 1)
-
-        val rowIdxStart = max(0, idxForOffset(offsetY))
-        val rowIdxEnd = min(board.rows, idxForOffset(offsetY - height) + 1)
-
-        for (rowIdx in rowIdxStart until rowIdxEnd) {
-            for (columnIdx in columnIdxStart until columnIdxEnd) {
-                drawCell(commonCanvas, board.cellAt(column = columnIdx, row = rowIdx), rowIdx, columnIdx)
-            }
-        }
+        boardDisplay.draw(commonCanvas,board, width.toDouble(), height.toDouble())
 
     }
 
     fun centerBoard() {
         val board = board ?: return
-        offsetX = (width - board.rows * cellSize - cellSize) / 2.0f
-        offsetY = (height - board.columns * cellSize - cellSize) / 2.0f
+        boardDisplay.centerBoard(board, width.toDouble(), height.toDouble())
         invalidate()
-    }
-
-    private fun drawCell(canvas: CommonCanvas, cell: Cell, rowIdx: Int, columnIdx: Int) {
-
-        if (cell.alive) {
-            canvas.drawRect(rectFor(rowIdx, columnIdx), CommonPaint())
-        }
     }
 
     private fun rectFor(rowIdx: Int, columnIdx: Int): Rectangle {

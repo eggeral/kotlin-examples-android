@@ -22,7 +22,7 @@ class CommonPaint {
 
 data class CommonColor(val red: Int, val green: Int, val blue: Int, val alpha: Float = 1.0f)
 
-class BoardDisplay {
+class BoardDisplay(private val minCellSize: Double, private val maxCellSize: Double) {
 
     private val paint = CommonPaint().apply {
         color = CommonColor(0x44, 0x44, 0x44)
@@ -61,6 +61,36 @@ class BoardDisplay {
             }
         }
 
+    }
+
+    fun centerBoard(board: Board, width: Double, height: Double) {
+        offsetX = (width - board.rows * cellSize - cellSize) / 2.0f
+        offsetY = (height - board.columns * cellSize - cellSize) / 2.0f
+    }
+
+    fun scale(board: Board, scaleFactor: Double, width: Double, height: Double, focusX: Double, focusY: Double) {
+        val newCellSize = cellSize * scaleFactor
+        val oldCellSize = cellSize
+
+
+        cellSize = when {
+            newCellSize * board.columns < width -> cellSize
+            newCellSize * board.rows < height -> cellSize
+            newCellSize < minCellSize -> minCellSize
+            newCellSize > maxCellSize -> maxCellSize
+            else -> newCellSize
+        }
+
+        val realScaleFactor = cellSize / oldCellSize
+
+        val distX = focusX - offsetX
+        val distY = focusY - offsetY
+
+        val corrX = distX - distX * realScaleFactor
+        val corrY = distY - distY * realScaleFactor
+
+        offsetX += corrX
+        offsetY += corrY
     }
 
     private fun drawCell(commonCanvas: CommonCanvas, cell: Cell, rowIdx: Int, columnIdx: Int) {
