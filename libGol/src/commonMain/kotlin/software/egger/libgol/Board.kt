@@ -77,3 +77,17 @@ fun Map<Position2d, Boolean>.translatedTo(column: Int, row: Int): Map<Position2d
     return result
 }
 
+private const val size = 1000
+
+val defaultBoard: Board = Board(size, size).apply {
+
+    setCells(
+            """
+                ***_*
+                *____
+                ___**
+                _**_*
+                *_*_*
+                """.trimIndent().cells().translatedTo(size / 2 - 2, size / 2 - 2))
+
+}
